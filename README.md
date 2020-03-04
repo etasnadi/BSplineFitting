@@ -1,7 +1,7 @@
 BSplineFitting
 ==============
 
-Fitting cubic spline curve to 2d points
+Fitting cubic spline curve to 2d points (with Python interface)
 
 ## Introduction ##
 
@@ -23,13 +23,14 @@ This project depends on two code librarie:
 2. Download and extract ANN e.g. 1.1.2 to ANN_DIR from https://www.cs.umd.edu/~mount/ANN/
 cd to the dir, and build: ```make linux-g++``` for linux (call ```make``` without parameters to see the build targets for different platforms).
 3. Build the main project with cmake, set the cache variables ```EIGEN_DIR``` and ```ANN_DIR``` properly.
+4. Build the python interface by navigating the ```py_interface``` dir. Add the libs to the path before using.
 
 ## Building and Running ##
 BSplineFitting should be able to run in any environment, but it is **only** tested in windows enviroment.
 
 I use cmake to configure and generate project files.
 
-## Main Files##
+## Main Files ##
 drawResult.m: a simple .m file to visulize the input and output
 
 ```core/cubic_b_spline.h```: a class encode the cubic b spline

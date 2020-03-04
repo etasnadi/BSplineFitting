@@ -1,0 +1,14 @@
+from distutils.core import setup, Extension
+
+module1 = Extension('pysplfit',
+                    sources = ['py_module.cpp'],
+                    library_dirs = ["."],
+                    libraries = ['splfit', 'ANN'],
+                    extra_link_args = ['-fPIC'],
+                    extra_compile_args = ['-std=c++11']
+                )
+
+setup (name = 'PySplFit',
+       version = '1.0',
+       description = 'Python interface for B-Spline fitting.',
+       ext_modules = [module1])

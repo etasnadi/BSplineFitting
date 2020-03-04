@@ -3,21 +3,45 @@
 #include "read_write_asc.h"
 
 #include <iostream>
+#include "py_interface.h"
 
-int main(int argc, char *argv[])
-{
+// Expects float vector as input and returns a tuple of float arrays.
+ResultTuple py_fit(std::vector<float> input, int nCol){
 
-	char inpf[200],*input; 
-	argc--;argv++;					//Skip program name arg
+	CubicBSplineCurve curve(0.002);
+	SplineCurveFitting scf;
+	std::vector<Vector2d> points;
 
-	if (argc<1)
+	int nRow = input.size()/nCol;
+	points.resize( nRow);
+	int idx = 0;
+	for( int i = 0; i!= nRow; ++i )
 	{
-		cout<<"Input file:"<<endl;
-		cin>>inpf; 
-		input = inpf;
+		points[i] = Vector2d( input[idx+0], input[idx+1]);
+		idx += nCol;
 	}
-	else input    = argv[0];
+	
+	scf.apply(points, curve, 28, 50, 0.005, 0.005, 0.0001, SPHERE_INIT);
 
+    std::vector<float> controls;
+    std::vector<float> contour;
+    
+    auto ctrl = curve.getControls();
+    auto samples = curve.getSamples();
+    
+    for( int i = 0; i!= ctrl.size(); ++i){
+		controls.push_back(ctrl[i].x());
+    	controls.push_back(ctrl[i].y());
+		contour.push_back(samples[i].x());
+    	contour.push_back(samples[i].y());
+	}
+    
+    ResultTuple t(controls, contour);
+    return t;
+}
+
+// Python interface for the original app
+void py_interface(char * input){
 	string inFileName( input );
 	string outFileName1 = inFileName + "_controls.txt";
 	string outFileName2 = inFileName + "_spline.txt";
@@ -34,6 +58,22 @@ int main(int argc, char *argv[])
 //	CReadWriteAsc::writeAsc( inFileName, points);
 	CReadWriteAsc::writeAsc( outFileName1, curve.getControls());
 	CReadWriteAsc::writeAsc( outFileName2, curve.getSamples() );
+}
 
+int main(int argc, char *argv[])
+{
+
+	char inpf[200],*input; 
+	argc--;argv++;					//Skip program name arg
+
+	if (argc<1)
+	{
+		cout<<"Input file:"<<endl;
+		cin>>inpf; 
+		input = inpf;
+	}
+	else input    = argv[0];
+
+    py_interface(input);
 
 }
