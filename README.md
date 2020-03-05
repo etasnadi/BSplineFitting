@@ -1,7 +1,7 @@
 BSplineFitting (with Python interface)
 ==============
 
-![Fitting a curve to 5 points.](/demo.png)
+![Fitting a curve to 5 points.](/SplineFitting/demo.png)
 
 Fitting cubic spline curve to 2d points
 
