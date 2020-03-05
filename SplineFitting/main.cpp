@@ -1,40 +1,45 @@
 
 #include "spline_curve_fitting.h"
 #include "read_write_asc.h"
-
+ 
 #include <iostream>
 #include "py_interface.h"
 
 // Expects float vector as input and returns a tuple of float arrays.
-ResultTuple py_fit(std::vector<float> input, int nCol){
+ResultTuple py_fit(std::vector<float> input, settings& s){
 
-	CubicBSplineCurve curve(0.002);
+	CubicBSplineCurve curve(s.internal); 
 	SplineCurveFitting scf;
 	std::vector<Vector2d> points;
-
+ 
+    int nCol = 2; // The number of columns is 2!  
 	int nRow = input.size()/nCol;
-	points.resize( nRow);
+	points.resize( nRow); 
 	int idx = 0;
-	for( int i = 0; i!= nRow; ++i )
-	{
+	for( int i = 0; i!= nRow; ++i)
+	{ 
 		points[i] = Vector2d( input[idx+0], input[idx+1]);
 		idx += nCol;
 	}
-	
-	scf.apply(points, curve, 28, 50, 0.005, 0.005, 0.0001, SPHERE_INIT);
+
+	scf.apply(points, curve, s.controlNum, s.maxIterNum, 
+	    s.alpha, s.beta, s.epsilon, SPHERE_INIT);
 
     std::vector<float> controls;
     std::vector<float> contour;
     
-    auto ctrl = curve.getControls();
-    auto samples = curve.getSamples();
-    
-    for( int i = 0; i!= ctrl.size(); ++i){
-		controls.push_back(ctrl[i].x());
-    	controls.push_back(ctrl[i].y());
-		contour.push_back(samples[i].x());
-    	contour.push_back(samples[i].y());
+    auto curve_controls = curve.getControls();
+    auto curve_contour = curve.getSamples();
+      
+    for( int i = 0; i != curve_controls.size(); ++i){
+		controls.push_back(curve_controls[i].x());
+    	controls.push_back(curve_controls[i].y());
 	}
+
+    for( int i = 0; i != curve_contour.size(); ++i){
+    	contour.push_back(curve_contour[i].x());
+    	contour.push_back(curve_contour[i].y());
+	}    
     
     ResultTuple t(controls, contour);
     return t;
@@ -48,12 +53,14 @@ void py_interface(char * input){
 
 	CubicBSplineCurve curve(0.002);
 	SplineCurveFitting scf;
-
+ 
 
 	std::vector<Vector2d> points;
 	CReadWriteAsc::readAsc( inFileName, points );
 
-	scf.apply(points, curve, 28, 50, 0.005, 0.005, 0.0001, SPHERE_INIT);
+    settings s;
+	scf.apply(points, curve, s.controlNum, s.maxIterNum, 
+	    s.alpha, s.beta, s.epsilon, SPHERE_INIT);
 
 //	CReadWriteAsc::writeAsc( inFileName, points);
 	CReadWriteAsc::writeAsc( outFileName1, curve.getControls());

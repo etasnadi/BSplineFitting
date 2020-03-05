@@ -4,5 +4,15 @@
 typedef std::vector<float> FloatArray;
 typedef std::tuple<FloatArray, FloatArray> ResultTuple;
 
-ResultTuple py_fit(FloatArray input, int nCol);
+typedef struct {
+	int controlNum = 28;
+	int maxIterNum = 30;
+	double alpha = 0.002;
+	double beta = 0.005;
+	double epsilon = 0.001;
+    // Internal variable
+	double internal = 0.002;
+} settings;
+
+ResultTuple py_fit(FloatArray input, settings& nCol);
 void py_interface(char * input);

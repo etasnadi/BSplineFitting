@@ -1,7 +1,9 @@
-BSplineFitting
+BSplineFitting (with Python interface)
 ==============
 
-Fitting cubic spline curve to 2d points (with Python interface)
+![Fitting a curve to 5 points.](/demo.png)
+
+Fitting cubic spline curve to 2d points
 
 ## Introduction ##
 
@@ -19,14 +21,27 @@ The input is a set of 2d points, the output are control points of a close cubic 
 
 This project depends on two code librarie:
 
-1. Download Eigen e.g. 3.3.7 from http://eigen.tuxfamily.org/index.php?title=Main\_Page, build and install the project into the dir ```EIGEN_DIR```
+1. Download Eigen e.g. 3.3.7 from http://eigen.tuxfamily.org/index.php?title=Main_Page, build and install the project into the dir ```EIGEN_DIR```
 2. Download and extract ANN e.g. 1.1.2 to ANN_DIR from https://www.cs.umd.edu/~mount/ANN/
 cd to the dir, and build: ```make linux-g++``` for linux (call ```make``` without parameters to see the build targets for different platforms).
 3. Build the main project with cmake, set the cache variables ```EIGEN_DIR``` and ```ANN_DIR``` properly.
-4. Build the python interface by navigating the ```py_interface``` dir. Add the libs to the path before using.
+4. Build the python interface by navigating the ```py_interface``` dir in the build folder. Add the libs to the path before using.
+
+Python example:
+
+```python
+import pysplfit
+# Input point cloud in row-major format.
+input = [0, 0, 0, 1, 1, 0, 1, 1]
+# The control points and the contour in the same format. Only the first parameter is mandatory.
+# alpha: curvature coeff, beta: curve length coeff, epsilon: stopping condition
+fit_contorls, fit_contour = pysplfit.fit(input, controlnum=8, maxiternum=5, alpha=0.0025, gama=0.006, epsilon=0.002)
+
+# see the demo.py
+```
 
 ## Building and Running ##
-BSplineFitting should be able to run in any environment, but it is **only** tested in windows enviroment.
+Tested on Linux, however the original repo this code forked from targeted Windows...
 
 I use cmake to configure and generate project files.
 
@@ -38,10 +53,4 @@ drawResult.m: a simple .m file to visulize the input and output
 ```core/spline_curve_fitting.h```: 
 
 ```read_write_asc.h```: a simple class that reads/writes files
-
-
-
-
-
-
 

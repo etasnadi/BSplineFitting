@@ -3,7 +3,6 @@
 #include <fstream>
 #include <iostream>
 
-//
 std::vector<double> read_data(const string& filename, int &nRow, int &nCol){
 	std::ifstream fin(filename);
 	std::vector<double> coefficients;

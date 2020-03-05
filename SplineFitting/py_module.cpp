@@ -1,14 +1,14 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include "py_interface.h"
+#include <iostream>
 
 static PyObject *SplError;
 
-static std::vector<float> to_vec(PyObject *self, PyObject *args)
-{
+// Converts a python list object to an std::vector
+static std::vector<float> to_vec(PyObject *self, PyObject *args){
     PyObject *float_list;
     int pr_length;
-    double *pr;
 
     std::vector<float> empty;
     std::vector<float> result;
@@ -18,22 +18,16 @@ static std::vector<float> to_vec(PyObject *self, PyObject *args)
     pr_length = PyObject_Length(float_list);
     if (pr_length < 0)
         return empty;
-    pr = (double *) malloc(sizeof(double *) * pr_length);
-    if (pr == NULL)
-        return empty;
     for (int index = 0; index < pr_length; index++) {
         PyObject *item;
         item = PyList_GetItem(float_list, index);
-        if (!PyFloat_Check(item))
-            pr[index] = 0.0;
-        
         result.push_back(float(PyFloat_AsDouble(item)));
     }
     return result;
 }
 
+// Converts an std::vector to a python list object
 static PyObject* to_pyObject(std::vector<float>& data){
-    srand(time(NULL));
     int N = data.size();
     PyObject* python_val = PyList_New(N);
     for (int i = 0; i < N; ++i)
@@ -44,11 +38,41 @@ static PyObject* to_pyObject(std::vector<float>& data){
     return python_val;
 }
 
+/*
+
+Fits the curve to the points given as 1D array (row-major encoding of triples
+where the last element is zero).
+
+*/
 static PyObject *
-pysplfit_fit(PyObject *self, PyObject *args){
-    int nCol = 3;
+pysplfit_fit(PyObject *self, PyObject *args, PyObject *kwargs){
+    settings s;
+
+    /* Debug parameters:
+    // Parsing the arguments
+    PyObject_Print(self, stdout, 0);
+    fprintf(stdout, "\n");
+    PyObject_Print(args, stdout, 0);
+    fprintf(stdout, "\n");
+    PyObject_Print(kwargs, stdout, 0);
+    fprintf(stdout, "\n");
+    */
+    
+    // A placeholder object to the input points, but it will be parsed later. TODO: remove this, because the first
+    // parameter shoudl not be optional!
+    PyObject *o;
+    static const char *kwlist[] = { "input", "controlnum", "maxiternum", "alpha", "beta", "epsilon", NULL};
+    if (! PyArg_ParseTupleAndKeywords(args, kwargs, "O|iiddd",
+                                      const_cast<char**>(kwlist),
+                                      &o, &(s.controlNum), &(s.maxIterNum), &(s.alpha), &(s.beta), &(s.epsilon))) {
+        return NULL;
+    }
+    /* Debug:
+    std::cout << "Control num: " << s.controlNum << " Max iter num: " << s.maxIterNum << 
+        " alpha: " << s.alpha << " beta: " << s.beta << " epsilon: " << s.epsilon << std::endl;
+    */
     auto input = to_vec(self, args);
-    auto result = py_fit(input, nCol);
+    auto result = py_fit(input, s);
     
     auto controls = std::get<0>(result);
     auto contour = std::get<1>(result);
@@ -60,7 +84,7 @@ pysplfit_fit(PyObject *self, PyObject *args){
 }
 
 static PyMethodDef SplMethods[] = {
-    {"fit",  pysplfit_fit, METH_VARARGS,
+    {"fit", (PyCFunction) pysplfit_fit, METH_VARARGS | METH_KEYWORDS,
      "Fit the B-Spline to the points."},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
