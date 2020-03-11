@@ -34,4 +34,5 @@ add_custom_command(TARGET splfit POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${A
 add_custom_command(TARGET splfit POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/py_interface.h ${CMAKE_CURRENT_BINARY_DIR}/py_interface/py_interface.h)
 add_custom_command(TARGET splfit POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/py_module.cpp ${CMAKE_CURRENT_BINARY_DIR}/py_interface/py_module.cpp)
 add_custom_command(TARGET splfit POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/setup.py.in ${CMAKE_CURRENT_BINARY_DIR}/py_interface/setup.py)
+add_custom_command(TARGET splfit POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/demo.py ${CMAKE_CURRENT_BINARY_DIR}/py_interface/demo.py)
 

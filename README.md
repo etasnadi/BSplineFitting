@@ -10,7 +10,7 @@ Fitting cubic spline curve to 2d points
 This is an implementation of paper "Fitting B-spline Curves to Point Clouds
 by Curvature-Based Squared Distance Minimization".
 
-Link to the paper: [http://www.geometrie.tuwien.ac.at/ig/sn/2006/wpl\_curves\_06/wpl\_curves\_06.html](http://www.geometrie.tuwien.ac.at/ig/sn/2006/wpl_curves_06/wpl_curves_06.html "link")
+Link to the paper: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/Fitting-B-spline-Curves-to-Point-Clouds-by-Curvature-Based-Squared-Distance-Minimization.pdf
 
 The input is a set of 2d points, the output are control points of a close cubic spline curve.
 
@@ -25,7 +25,7 @@ This project depends on two code librarie:
 2. Download and extract ANN e.g. 1.1.2 to ANN_DIR from https://www.cs.umd.edu/~mount/ANN/
 cd to the dir, and build: ```make linux-g++``` for linux (call ```make``` without parameters to see the build targets for different platforms).
 3. Build the main project with cmake, set the cache variables ```EIGEN_DIR``` and ```ANN_DIR``` properly.
-4. Build the python interface by navigating the ```py_interface``` dir in the build folder. Add the libs to the path before using.
+4. Build the python interface by navigating the ```py_interface``` dir in the build folder e.g. ```python setup.py install```.
 
 Python example:
 
@@ -35,7 +35,7 @@ import pysplfit
 input = [0, 0, 0, 1, 1, 0, 1, 1]
 # The control points and the contour in the same format. Only the first parameter is mandatory.
 # alpha: curvature coeff, beta: curve length coeff, epsilon: stopping condition
-fit_contorls, fit_contour = pysplfit.fit(input, controlnum=8, maxiternum=5, alpha=0.0025, gama=0.006, epsilon=0.002)
+fit_contorls, fit_contour = pysplfit.fit(input, controlnum=8, maxiternum=5, alpha=0.0025, beta=0.006, epsilon=0.002)
 
 # see the demo.py
 ```

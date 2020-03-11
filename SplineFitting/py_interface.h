@@ -10,7 +10,7 @@ typedef struct {
 	double alpha = 0.002;
 	double beta = 0.005;
 	double epsilon = 0.001;
-    // Internal variable
+    // The resolution of the curve when discretized
 	double internal = 0.002;
 } settings;
 

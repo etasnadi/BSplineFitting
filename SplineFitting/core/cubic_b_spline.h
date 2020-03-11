@@ -130,9 +130,9 @@ private:
 
 
 private:
-	double interal_;                //采样点的间隔
-	std::vector<Vector2d> controls_;    //曲线的控制点
-	std::vector<Vector2d> positions_;   //曲线上的采样点
+	double interal_;						// The resolution of the curve when discretizing
+	std::vector<Vector2d> controls_;		// The control points
+	std::vector<Vector2d> positions_;		// The points of the discretized curve
 
 };
 

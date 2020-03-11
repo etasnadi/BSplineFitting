@@ -3,13 +3,12 @@
 
 #include <ANN/ANN.h>
 
-
-
-
 void CubicBSplineCurve::setNewControl( const vector<Vector2d>& controlPs)
 {
 	clear();
 	controls_ = controlPs;
+
+	//nb_control(): returns the size(controls_)
 
 	for( unsigned int i = 0; i<nb_control(); i++)
 	{
@@ -26,24 +25,32 @@ void CubicBSplineCurve::setNewControl( const vector<Vector2d>& controlPs)
 //************************************
 // Method:    getPos
 // Returns:   Eigen::Vector2d
-// Function:  公式B(t)的展开形式
+// Function:  锟斤拷式B(t)锟斤拷展锟斤拷锟斤拷式
 // Time:      2014/08/05
 // Author:    Qian
 //************************************
 Vector2d CubicBSplineCurve::getPos( const Parameter& para) const
 {
+	/*
+		cm = 
+		(-1,  3, -3,  1)
+		( 3, -6,  3,  0)
+		(-3,  0,  3,  0)
+		( 1,  4,  1,  0)	
+	*/	
 	MatrixXd cm(4,4);
-	cm << -1, 3, -3, 1,
-		3, -6, 3, 0,
-		-3, 0, 3, 0,
-		1, 4, 1, 0;
+	cm << 
+		-1,  3, -3,  1,
+		 3, -6,  3,  0,
+		-3,  0,  3,  0,
+		 1,  4,  1,  0;
 
 	double tf = para.second;
 	int ki = para.first; 
 
 	MatrixXd  tm(1,4);
+	// tm = (tf^3, tf^2, tf^1, tf^0)
 	tm << tf*tf*tf, tf*tf, tf, 1;
-
 
 	size_t n = nb_control();
 	MatrixXd pm(4,2);

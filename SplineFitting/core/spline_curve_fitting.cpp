@@ -12,10 +12,11 @@ void SplineCurveFitting::initControlPoint(const vector<Vector2d>& points,
 {
 	// compute the initial 12 control points
 	controlPs.clear();
-	int perNum = controlNum/4;
 
 	if (initType == RECT_INIT)
 	{
+		int perNum = controlNum/4;
+
 		Vector2d v1 = points[0];
 		Vector2d v2 = points[0];
 
@@ -52,6 +53,7 @@ void SplineCurveFitting::initControlPoint(const vector<Vector2d>& points,
 	}
 	else
 	{
+		// The center is the "center of mass"
 		Vector2d cen(0, 0);
 		for (size_t i = 0; i != points.size(); ++i)
 		{
@@ -59,6 +61,7 @@ void SplineCurveFitting::initControlPoint(const vector<Vector2d>& points,
 		}
 		cen /= points.size();
 
+		// The distance of the farthest point from the center
 		double radius = 0;
 		for (size_t i = 0; i!= points.size(); ++i)
 		{
@@ -67,6 +70,7 @@ void SplineCurveFitting::initControlPoint(const vector<Vector2d>& points,
 				radius = len;
 		}
 
+		// Uniformly sample "controlNum" points on the circle with radius
 		double theta = (2 * TEMP_PI) / controlNum;
 		for (size_t i = 0; i != controlNum; ++i)
 		{
@@ -78,8 +82,8 @@ void SplineCurveFitting::initControlPoint(const vector<Vector2d>& points,
 }
 
 double SplineCurveFitting::apply(
-						   const vector<Vector2d> &points, 
-						   CubicBSplineCurve &curve,
+						   const vector<Vector2d> &points,	/* The point cloud */
+						   CubicBSplineCurve &curve,		/* A curve instance to store the control points and the discretizated points. */
 						   int controlNum /* = 28 */,
 						   int maxIterNum  /*= 30 */,
 						   double alpha /* = 0.002 */, 
@@ -87,11 +91,12 @@ double SplineCurveFitting::apply(
 						   double eplison /* = 0.0001 */,
 						   EInitType initType /* =SPHERE_INIT */)
 {
-	controlNum = controlNum/4*4;
+	controlNum = controlNum/4*4; // ???
 
 	// initialize the cube B-spline
 	CubicBSplineCurve* spline = &curve;
 	vector<Vector2d> controlPs;
+	// The control points initialized using the point cloud.
 	initControlPoint(points, controlPs, controlNum, initType);
 	spline->setNewControl( controlPs);
 
@@ -101,7 +106,7 @@ double SplineCurveFitting::apply(
 	MatrixXd sm = spline->getFIntegralSq();
 	// end test
 	
-	// find the foot print, will result in error
+	// Compute foot point distances
 	std::vector< std::pair<int,double> > parameters;
 	double fsd = spline->findFootPrint( points, parameters);
 	int iterNum = 0;
